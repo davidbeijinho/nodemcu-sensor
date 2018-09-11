@@ -39,7 +39,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Invalid input"
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/boardInformation"
+                        }
                     }
                 }
             }
@@ -149,88 +152,45 @@
         "ledInformation": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "petId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "quantity": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "shipDate": {
-                    "type": "string",
-                    "format": "date-time"
-                },
                 "status": {
-                    "type": "string",
-                    "description": "Order Status",
-                    "enum": [
-                        "placed",
-                        "approved",
-                        "delivered"
-                    ]
-                },
-                "complete": {
                     "type": "boolean",
-                    "default": false
+                    "description": "The led status"
                 }
-            },
-            "xml": {
-                "name": "Led Information"
             }
         },
         "sensorInformation": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
+                "pressure": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "the pressure in Pa"
                 },
-                "username": {
-                    "type": "string"
+                "temperature": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "The temperature in celcius"
                 },
-                "firstName": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "userStatus": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "User Status"
+                "altitude": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "The altitud in meters"
                 }
-            },
-            "xml": {
-                "name": "Sensor information"
             }
         },
         "boardInformation": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
+                "upTime": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "The board uptime, milliseconds since boot"
                 },
-                "name": {
-                    "type": "string"
+                "startTime": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "The board start time epoch"
                 }
-            },
-            "xml": {
-                "name": "Board Information"
             }
         },
         "ApiResponse": {
