@@ -9,12 +9,12 @@ Connected hardware
 
 Board Json
 
-    - [ESP8266_4MB.json](http://www.espruino.com/json/ESP8266_4MB.json)
+- http://www.espruino.com/json/ESP8266_4MB.json
 
 Swagger Ui
 
-    - http://localhost:3000
-    - http://localhost:3000/swagger.json
+- http://localhost:3000
+- http://localhost:3000/swagger.json
 
 ## Todo
     - Get current time from network
