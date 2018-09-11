@@ -10,3 +10,7 @@ Connected hardware
 Board Json
 
     - http://www.espruino.com/json/ESP8266_4MB.json
+
+Swagger Ui
+    - http://localhost:3000
+    - http://localhost:3000/swagger.json
