@@ -143,7 +143,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/boardInformation"
+                                    "$ref": "#/components/schemas/errorSensorApiResponse"
                                 }
                             }
                         }
@@ -238,11 +238,8 @@
                     }
                 ]
             },
-            "errorApiResponse": {
+            "errorSensorApiResponse": {
                 "allOf": [
-                    {
-                        "$ref": "#/components/schemas/baseProperties"
-                    },
                     {
                         "type": "object",
                         "properties": {
@@ -250,6 +247,9 @@
                                 "type": "string"
                             }
                         }
+                    },
+                    {
+                        "$ref": "#/components/schemas/boardInformation"
                     }
                 ]
             }
