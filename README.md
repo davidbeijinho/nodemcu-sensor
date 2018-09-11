@@ -9,7 +9,7 @@ Connected hardware
 
 Board Json
 
-    - http://www.espruino.com/json/ESP8266_4MB.json
+    - [ESP8266_4MB.json](http://www.espruino.com/json/ESP8266_4MB.json)
 
 Swagger Ui
 
