@@ -16,7 +16,7 @@ Swagger Ui
     - http://localhost:3000
     - http://localhost:3000/swagger.json
 
-## TODO
+## Todo
     - Get current time from network
     - Method to update sea level presure
     - Method to call api in intervals
