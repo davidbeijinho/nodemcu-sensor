@@ -2,14 +2,14 @@
   "name": "nodemcu-sensor",
   "version": "0.0.1",
   "description": "The code for a sensor build with nodemcu using espruino",
-  "main": "./src/index.js",
+  "main": "./src/server.js",
   "scripts": {
     "list": "espruino --list",
     "help": "espruino --help",
     "configs": "espruino --listconfigs",
     "espruino": "espruino",
-    "uploadIndex": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true ./src/index.js",
-    "uploadIndex:watch": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w ./src/index.js",
+    "uploadServer": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true ./src/server.js",
+    "uploadServer:watch": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w ./src/server.js",
     "uploadBlink": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true ./src/blink.js",
     "uploadBlink:watch": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w ./src/blink.js",
     "uploadFile": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w",
@@ -17,8 +17,8 @@
     "process": "espruino --board ESP8266_4MB  -v -b 115200 -e \"console.log(JSON.stringify(process.env));\"",
     "reset": "espruino --board ESP8266_4MB -v -b 115200 -e \"reset();\" --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
     "save": "espruino  --board ESP8266_4MB -v -b 115200 -e \"save();\"  --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
-    "upload:watch": "npm run uploadIndex:watch",
-    "upload": "npm run uploadIndex"
+    "upload:watch": "npm run uploadServer:watch",
+    "upload": "npm run uploadServer"
     
   },
   "repository": {
