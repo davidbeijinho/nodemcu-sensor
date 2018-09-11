@@ -1,7 +1,7 @@
 const WIFI = require('Wifi');
 const HTTP = require('http');
-const BMP_MODE = 3;
 const BMP085 = require('BMP085');
+const BMP_MODE = 3;
 const LED = NodeMCU.D4;
 const PORT = 8080;
 const SEALEVEL = 99867; // current sea level pressure in Pa
