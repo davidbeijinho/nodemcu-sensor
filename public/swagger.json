@@ -8,7 +8,7 @@
             "email": "davidbeijinho@gmail.com"
         }
     },
-    "host": "http://192.168.0.160:8080",
+    "host": "192.168.0.160:8080",
     "basePath": "",
     "tags": [
         {
@@ -34,6 +34,11 @@
                     "Main"
                 ],
                 "summary": "Get the main information about the device",
+                "operationId": "addPet",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
                 "produces": [
                     "application/json"
                 ],

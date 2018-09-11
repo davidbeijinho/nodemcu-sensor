@@ -19,7 +19,7 @@ const setWifi = function () {
     });
     WIFI.connect(CONFIG.WIFI.SSID, CONFIG.WIFI.options, function () { 
         console.log('INFO: Wifi connection', arguments); 
-    });echo
+    });
     WIFI.stopAP();
 };
 
