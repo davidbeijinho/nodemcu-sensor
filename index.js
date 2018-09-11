@@ -1,18 +1,12 @@
 const WIFI = require('Wifi');
 const HTTP = require('http');
 const BMP085 = require('BMP085');
+const CONFIG = require('./config.js');
 const BMP_MODE = 3;
 const LED = NodeMCU.D4;
 const PORT = 8080;
 const SEALEVEL = 99867; // current sea level pressure in Pa
 const I2CBUS = new I2C();
-const wifiConfig = {
-    SSID: 'XXXXX',
-    hostname: 'nomada-espruino',
-    options: {
-        password: 'XXXXX',
-    }
-};
 var BMP = null;
 
 const STATE = {
@@ -20,10 +14,10 @@ const STATE = {
 };
 
 const setWifi = function () {
-    WIFI.setHostname(wifiConfig.hostname, function () {
+    WIFI.setHostname(CONFIG.WIFI.hostname, function () {
         console.log('INFO: Wifi Hostanme seted', arguments);
     });
-    WIFI.connect(wifiConfig.SSID, wifiConfig.options, function () { 
+    WIFI.connect(CONFIG.WIFI.SSID, CONFIG.WIFI.options, function () { 
         console.log('INFO: Wifi connection', arguments); 
     });echo
     WIFI.stopAP();
