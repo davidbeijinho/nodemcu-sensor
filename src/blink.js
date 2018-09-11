@@ -2,5 +2,5 @@ var status = false;
 
 setInterval(function() {
     status = !status;
-    digitalWrite(LED_1, status);
+    digitalWrite(NodeMCU.D4, status);
 }, 1000);

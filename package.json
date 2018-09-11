@@ -1,19 +1,25 @@
 {
   "name": "nodemcu-sensor",
   "version": "0.0.1",
-  "description": "The code a sensor build with nodemcu using espruino",
-  "main": "index.js",
+  "description": "The code for a sensor build with nodemcu using espruino",
+  "main": "./src/index.js",
   "scripts": {
-    "list":"espruino --list",
-    "help":"espruino --help",
-    "configs":"espruino --listconfigs",
-    "connect":"espruino -p /dev/ttyUSB0",
-    "upload":"espruino -p /dev/ttyUSB0 index.js",
-    "upload1":"espruino --board ESP8266_BOARD index.js",
-    "ledTest": "espruino -p /dev/ttyUSB0 -e \"digitalWrite(NodeMCU.D4,1);\"",
-    "ledTest1": "espruino --board ESP8266_BOARD -e \"digitalWrite(NodeMCU.D4,1);\"",
-    "ledTest2": "espruino --no-ble --board ESP8266_BOARD -e \"digitalWrite(NodeMCU.D4,false);\"",
-    "test": "espruino --board ESP8266_BOARD -e \"digitalWrite(LED1,1);\""
+    "list": "espruino --list",
+    "help": "espruino --help",
+    "configs": "espruino --listconfigs",
+    "espruino": "espruino",
+    "uploadIndex": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true ./src/index.js",
+    "uploadIndex:watch": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w ./src/index.js",
+    "uploadBlink": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true ./src/blink.js",
+    "uploadBlink:watch": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w ./src/blink.js",
+    "uploadFile": "espruino --board ESP8266_4MB -b 115200 -v --no-ble --config RESET_BEFORE_SEND=true --config SAVE_ON_SEND=true -w",
+    "ledTest": "espruino --board ESP8266_4MB  -v -b 115200 -e \"digitalWrite(NodeMCU.D4,false);\"",
+    "process": "espruino --board ESP8266_4MB  -v -b 115200 -e \"console.log(JSON.stringify(process.env));\"",
+    "reset": "espruino --board ESP8266_4MB -v -b 115200 -e \"reset();\" --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
+    "save": "espruino  --board ESP8266_4MB -v -b 115200 -e \"save();\"  --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
+    "upload:watch": "npm run uploadIndex:watch",
+    "upload": "npm run uploadIndex"
+    
   },
   "repository": {
     "type": "git",
