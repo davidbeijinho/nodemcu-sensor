@@ -1,0 +1,37 @@
+{
+  "name": "nodemcu-sensor",
+  "version": "0.0.1",
+  "description": "The code a sensor build with nodemcu using espruino",
+  "main": "index.js",
+  "scripts": {
+    "list":"espruino --list",
+    "help":"espruino --help",
+    "configs":"espruino --listconfigs",
+    "connect":"espruino -p /dev/ttyUSB0",
+    "upload":"espruino -p /dev/ttyUSB0 index.js",
+    "upload1":"espruino --board ESP8266_BOARD index.js",
+    "ledTest": "espruino -p /dev/ttyUSB0 -e \"digitalWrite(NodeMCU.D4,1);\"",
+    "ledTest1": "espruino --board ESP8266_BOARD -e \"digitalWrite(NodeMCU.D4,1);\"",
+    "ledTest2": "espruino --no-ble --board ESP8266_BOARD -e \"digitalWrite(NodeMCU.D4,false);\"",
+    "test": "espruino --board ESP8266_BOARD -e \"digitalWrite(LED1,1);\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidbeijinho/nodemcu-sensor.git"
+  },
+  "keywords": [
+    "Javascript",
+    "NodeMCU",
+    "Espruino",
+    "IOT"
+  ],
+  "author": "davidbeijinho@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidbeijinho/nodemcu-sensor/issues"
+  },
+  "homepage": "https://github.com/davidbeijinho/nodemcu-sensor#readme",
+  "dependencies": {
+    "espruino": "^0.1.13"
+  }
+}
