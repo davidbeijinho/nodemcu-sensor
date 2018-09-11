@@ -84,7 +84,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ledInformation"
+                                    "$ref": "#/components/schemas/ledApiResponse"
                                 }
                             }
                         }
@@ -128,12 +128,12 @@
                 ],
                 "summary": "Get information of the sensor",
                 "responses": {
-                    "default": {
+                    "200": {
                         "description": "successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/boardInformation"
+                                    "$ref": "#/components/schemas/sensorApiResponse"
                                 }
                             }
                         }
@@ -218,10 +218,30 @@
                     }
                 }
             },
+            "sensorApiResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/sensorInformation"
+                    },
+                    {
+                        "$ref": "#/components/schemas/boardInformation"
+                    }
+                ]
+            },
+            "ledApiResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ledInformation"
+                    },
+                    {
+                        "$ref": "#/components/schemas/boardInformation"
+                    }
+                ]
+            },
             "errorApiResponse": {
                 "allOf": [
                     {
-                        "$ref": "#/definitions/baseProperties"
+                        "$ref": "#/components/schemas/baseProperties"
                     },
                     {
                         "type": "object",

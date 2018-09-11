@@ -63,7 +63,7 @@ const sensorResponse = function (res) {
 
 const ledResponse = function (res) {
     sendOKResponse(res, {
-        led: STATE.ledStatus,
+        status: STATE.ledStatus,
         upTime: getUptime(),
         startTime: STATE.startTime,
     });
@@ -86,6 +86,7 @@ const doResponse = function (res, code, data) {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
      });
     res.write(JSON.stringify(data));
     res.end();
