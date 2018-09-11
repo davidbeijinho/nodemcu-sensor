@@ -82,7 +82,11 @@ const errorResponse = function (res, code, message) {
 };
 
 const doResponse = function (res, code, data) {
-    res.writeHead(code, { 'Content-Type': 'application/json' });
+    res.writeHead(code, { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+     });
     res.write(JSON.stringify(data));
     res.end();
 };
@@ -166,6 +170,9 @@ const createServer = function (port) {
                 getRoutes(req, res);
                 break;
             case 'POST':
+                postRoutes(req, res);
+                break;
+            case 'OPTIONS': // HACK for swagger ui
                 postRoutes(req, res);
                 break;
             default:
