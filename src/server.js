@@ -4,7 +4,7 @@ const BMP085 = require('BMP085');
 const CONFIG = require('./config/config.js');
 const BMP_MODE = 3;
 const LED = NodeMCU.D4;
-const PORT = 8080;
+const PORT = 80;
 const SEALEVEL = 99867; // current sea level pressure in Pa
 const I2CBUS = new I2C();
 var BMP = null;
@@ -15,12 +15,17 @@ const STATE = {
 
 const setWifi = function () {
     WIFI.setHostname(CONFIG.WIFI.hostname, function () {
-        console.log('INFO: Wifi Hostanme seted', arguments);
-    });
-    WIFI.connect(CONFIG.WIFI.SSID, CONFIG.WIFI.options, function () { 
-        console.log('INFO: Wifi connection', arguments); 
+        console.log('INFO: Wifi Hostanme seted',  WIFI.getHostname());
+        WIFI.connect(CONFIG.WIFI.SSID, CONFIG.WIFI.options, function () { 
+            console.log('INFO: Wifi connection'); 
+            console.log('INFO: Wifi IP', WIFI.getIP());
+            WIFI.getDetails(function(){
+                console.log('INFO: Wifi details', arguments);
+            });
+        });
     });
     WIFI.stopAP();
+    WIFI.save();
 };
 
 const getUptime = function () {
@@ -173,9 +178,9 @@ const createServer = function (port) {
             case 'POST':
                 postRoutes(req, res);
                 break;
-            case 'OPTIONS': // HACK for swagger ui
-                postRoutes(req, res);
-                break;
+            // case 'OPTIONS': // HACK for swagger ui
+            //     postRoutes(req, res);
+            //     break;
             default:
                 console.log('INFO: Method not handled, ' + req.method);
                 errorResponse(res, 405, 'Method not handled');
