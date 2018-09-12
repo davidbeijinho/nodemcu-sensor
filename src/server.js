@@ -202,6 +202,7 @@ const checkUpdater= function(){
 
 const stopUpdater = function() {
     clearInterval(STATE.updater.process);
+    STATE.updater.active = false;
 };
 
 const updaterFunction = function() {
