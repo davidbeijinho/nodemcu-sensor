@@ -25,6 +25,10 @@
         {
             "name": "Led",
             "description": "Led related routes"
+        },
+        {
+            "name": "Updater",
+            "description": "Updater related routes"
         }
     ],
     "paths": {
@@ -70,6 +74,55 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/boardInformation"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/updater": {
+            "get": {
+                "tags": [
+                    "Updater"
+                ],
+                "summary": "Get the Updater Config",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/updaterInformation"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Updater"
+                ],
+                "summary": "Set the Updater config",
+                "requestBody": {
+                    "description": "Optional description in *Markdown*",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updaterInformation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updater config update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/updaterInformation"
                                 }
                             }
                         }
@@ -189,6 +242,21 @@
                 }
             },
             "boardInformation": {
+                "type": "object",
+                "properties": {
+                    "upTime": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "The board uptime, milliseconds since boot"
+                    },
+                    "startTime": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "The board start time epoch"
+                    }
+                }
+            },
+            "updaterInformation": {
                 "type": "object",
                 "properties": {
                     "upTime": {
