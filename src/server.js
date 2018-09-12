@@ -1,16 +1,11 @@
-const WIFI = require('Wifi');
 const HTTP = require('http');
-const BMP085 = require('BMP085');
-const CONFIG = require('./config/config.js');
-const BMP_MODE = 3;
-const LED = NodeMCU.D4;
+const SENSOR = require('sensor');
+const LED = require('led');
+const WIFI = require('myWifi');
+
 const PORT = 80;
-const SEALEVEL = 99867; // current sea level pressure in Pa
-const I2CBUS = new I2C();
 const MIN_INTERVAL = 10;
 const MAX_ERRORS = 10;
-var BMP = null;
-
 
 const defaultCalls = {
     time: 0,
@@ -31,7 +26,6 @@ const getDefaultStateCalls = function() {
 };
 
 const STATE = {
-    ledStatus: true,
     updater: {
         url: '',
         interval: MIN_INTERVAL,
@@ -45,28 +39,8 @@ const resetUpdaterCalls = function() {
     STATE.updater.calls = getDefaultStateCalls();
 };
 
-const setWifi = function () {
-    WIFI.setHostname(CONFIG.WIFI.hostname, function () {
-        console.log('INFO: Wifi Hostanme seted',  WIFI.getHostname());
-        WIFI.connect(CONFIG.WIFI.SSID, CONFIG.WIFI.options, function () {
-            console.log('INFO: Wifi connection');
-            console.log('INFO: Wifi IP', WIFI.getIP());
-            WIFI.getDetails(function(){
-                console.log('INFO: Wifi details', arguments);
-            });
-        });
-    });
-    WIFI.stopAP();
-    WIFI.save();
-};
-
 const getUptime = function () {
     return Date.now() - STATE.startTime;
-};
-
-const setLed = function (status) {
-    ledStatus = status;
-    digitalWrite(LED, ledStatus);
 };
 
 const infoResponse = function (res) {
@@ -74,26 +48,6 @@ const infoResponse = function (res) {
         upTime: getUptime(),
         startTime: STATE.startTime,
     });
-};
-
-const getSensorData = function(callback){
-    if (BMP !== null) {
-        BMP.getPressure(function (d) {
-            let altitude = BMP.getAltitude(d.pressure, SEALEVEL);
-            console.log('INFO: Pressure: ' + d.pressure + ' Pa');
-            console.log('INFO: Temperature: ' + d.temperature + ' C');
-            console.log('INFO: Altitude: ' + altitude + ' m');
-
-            callback(null, {
-                pressure: d.pressure,
-                temperature: d.temperature,
-                altitude: altitude,
-            });
-        });
-    } else {
-        console.log('INFO: Sensor not connected');
-        callback('Sensor not connected');
-    }
 };
 
 const sensorResponse = function (res) {
@@ -152,9 +106,8 @@ const doResponse = function (res, code, data) {
 };
 
 const connectResponse = function (res) {
-    var connected = (BMP !== null);
     sendOKResponse(res, {
-        bmp: connected,
+        bmp: SENSOR.isConected(),
         upTime: getUptime(),
         startTime: STATE.startTime,
     });
@@ -341,34 +294,14 @@ const createServer = function (port) {
     }).listen(port);
 };
 
-const connectToSensor = function () {
-    BMP = BMP085.connect(I2CBUS, BMP_MODE);
-    if (BMP !== null) {
-        console.log('INFO: Sucessfuly connected to sensor');
-    } else {
-        console.log('INFO: Error connecting to sensor');
-    }
-};
-
-const configureIC2 = function () {
-    console.log('INFO: configure IC2');
-    I2CBUS.setup({ scl: NodeMCU.D1, sda: NodeMCU.D2 });
-};
-
-const configureLed = function () {
-    console.log('INFO: Configuring LED');
-    pinMode(LED, 'output');
-    digitalWrite(LED, STATE.ledStatus);
-};
-
 E.on('init', function () {
     STATE.startTime = Date.now();
     console.log('INFO: init board');
-    configureLed();
-    setWifi();
+    LED.configureLed();
+    WIFI.setWifi();
     createServer(PORT);
-    configureIC2();
-    connectToSensor();
+    SENSOR.configureIC2();
+    SENSOR.connectToSensor();
 });
 
 console.log('INFO: End of script file');
