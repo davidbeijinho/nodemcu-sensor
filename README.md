@@ -17,6 +17,8 @@ Swagger Ui
 - http://localhost:3000/swagger.json
 
 ## Todo
+    - Be able to access to espruino over hostname
+    - Fix swagger UI POST send as OPTIONS
     - Get current time from network
     - Method to update sea level presure
     - Method to call api in intervals
