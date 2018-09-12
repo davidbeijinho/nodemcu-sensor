@@ -7,13 +7,17 @@ const LED = NodeMCU.D4;
 const PORT = 80;
 const SEALEVEL = 99867; // current sea level pressure in Pa
 const I2CBUS = new I2C();
+const MIN_INTERVAL = 10;
+const MAX_ERRORS = 10;
 var BMP = null;
+
 
 const defaultCalls = {
     time: 0,
     lastStatus: null,
     totalCount: 0,
     errorCount: 0,
+    errorSequence: 0,
 };
 
 const getDefaultStateCalls = function() {
@@ -22,6 +26,7 @@ const getDefaultStateCalls = function() {
         lastStatus: defaultCalls.lastStatus,
         totalCount: defaultCalls.totalCount,
         errorCount: defaultCalls.errorCount,
+        errorSequence: defaultCalls.errorSequence,
     };
 };
 
@@ -29,7 +34,7 @@ const STATE = {
     ledStatus: true,
     updater: {
         url: '',
-        interval: 0,
+        interval: MIN_INTERVAL,
         active: false,
         process: 0,
         calls: getDefaultStateCalls(),
@@ -183,8 +188,16 @@ const getRoutes = function (req, res) {
 const startUpdater = function(){
     STATE.updater.process = setInterval(function () {
         console.log('INFO: interval run');
+        checkUpdater();
         updaterFunction();
     }, STATE.updater.interval);
+};
+
+const checkUpdater= function(){
+    if (STATE.updater.calls.errorSequence >= MAX_ERRORS){
+        console.log('INFO: stop updater to many errors');
+        stopUpdater();
+    }
 };
 
 const stopUpdater = function() {
@@ -195,8 +208,8 @@ const updaterFunction = function() {
     getSensorData(function(err, data){
         if (err) {
             console.log('INFO: Error calling update function', err);
-        } else {
             updaterFail();
+        } else {
             updaterCallback(data);
         }
     });
@@ -226,18 +239,24 @@ const setUpdater = function(newConfig, callback, callbackParam) {
 };
 
 const updaterSuccess = function() {
+    STATE.updater.calls.lastStatus = true;
     STATE.updater.calls.totalCount++;
+    STATE.updater.calls.errorSequence = 0;
 };
 const updaterFail = function() {
-    STATE.updater.calls.status = false;
+    if (STATE.updater.calls.lastStatus === false) {
+        STATE.updater.calls.errorSequence++;
+    }
+    STATE.updater.calls.lastStatus = false;
     STATE.updater.calls.totalCount++;
     STATE.updater.calls.errorCount++;
+    console.log( STATE.updater.calls);
 };
 
 const setNewUpdater = function(newConfig) {
-    STATE.updater.url = newConfig.updater.url;
-    STATE.updater.interval = newConfig.updater.interval;
-    STATE.updater.active = newConfig.updater.active;
+    STATE.updater.url = newConfig.url;
+    STATE.updater.interval = newConfig.interval;
+    STATE.updater.active = newConfig.active;
 };
 
 const postRoutes = function (req, res) {
@@ -286,12 +305,12 @@ const handleLedRoute = function (data, res) {
 
 const handleUpdaterRoute = function (data, res) {
     var newConfig = {
-        url: data.hasOwnProperty('property1') ? data.url :  STATE.updater.url,
-        interval: data.hasOwnProperty('property1') ? data.interval :  STATE.updater.interval,
-        active: data.hasOwnProperty('property1') ? data.active :  STATE.updater.active,
+        url: data.hasOwnProperty('url') ? data.url :  STATE.updater.url,
+        interval: data.hasOwnProperty('interval') ? data.interval :  STATE.updater.interval,
+        active: data.hasOwnProperty('active') ? data.active :  STATE.updater.active,
     };
-
-    if (typeof newConfig.url == 'string' && typeof newConfig.url == 'number' && number >= 0 && typeof newConfig.active == 'boolean') {
+    console.log('INFO: new config', newConfig);
+    if (typeof newConfig.url == 'string' && typeof newConfig.interval == 'number' && newConfig.interval >= MIN_INTERVAL && typeof newConfig.active == 'boolean') {
         setUpdater(newConfig, updaterResponse, res);
     } else {
         console.log('INFO: Invalid updater config , ' + data);
