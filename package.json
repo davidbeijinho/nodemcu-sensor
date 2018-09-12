@@ -18,6 +18,7 @@
     "process": "espruino --board ESP8266_4MB  -v -b 115200 -e \"console.log(JSON.stringify(process.env));\"",
     "reset": "espruino --board ESP8266_4MB -v -b 115200 -e \"reset();\" --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
     "save": "espruino  --board ESP8266_4MB -v -b 115200 -e \"save();\"  --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
+    "resetsave": "espruino  --board ESP8266_4MB -v -b 115200 -e \"reset();save();\"  --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
     "upload:watch": "npm run uploadServer:watch",
     "upload": "npm run uploadServer"
   },
