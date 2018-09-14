@@ -3,17 +3,22 @@ const CONFIG = require('config');
 
 const setWifi = function () {
     WIFI.setHostname(CONFIG.WIFI.hostname, function () {
-        console.log('INFO: Wifi Hostanme seted',  WIFI.getHostname());
         WIFI.connect(CONFIG.WIFI.SSID, CONFIG.WIFI.options, function () {
             console.log('INFO: Wifi connection');
-            console.log('INFO: Wifi IP', WIFI.getIP());
+            WIFI.getHostname(function(){
+                console.log('INFO: Wifi Hostanme',arguments);
+            });
+            WIFI.getIP(function(){
+                console.log('INFO: Wifi IP', arguments);
+            })
             WIFI.getDetails(function(){
                 console.log('INFO: Wifi details', arguments);
             });
+            WIFI.stopAP();
+            WIFI.save();
         });
     });
-    WIFI.stopAP();
-    WIFI.save();
+    
 };
 
 module.exports = {

@@ -20,7 +20,7 @@ const configureLed = function () {
 };
 
 module.exports = {
-    setLed: setLed,
+    setStatus: setStatus,
     configureLed: configureLed,
     getStatus: getStatus,
 };

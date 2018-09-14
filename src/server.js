@@ -139,10 +139,10 @@ const getPostData = function (req, res, callback) {
 
 const handleLedRoute = function (data, res) {
     if (data.status === true) {
-        MYLED.setLed(true);
+        MYLED.setStatus(true);
         ledResponse(res);
     } else if (data.status === false) {
-        MYLED.setLed(false);
+        MYLED.setStatus(false);
         ledResponse(res);
     } else {
         console.log('INFO: Invalid data , ' + data);
