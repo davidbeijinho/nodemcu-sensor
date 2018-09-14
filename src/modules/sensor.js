@@ -52,5 +52,5 @@ module.exports = {
     configureIC2: configureIC2,
     connectToSensor: connectToSensor,
     isConected: isConected,
-    getSensorData: getSensorData
+    getSensorData: getSensorData,
 };

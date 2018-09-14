@@ -17,5 +17,5 @@ const setWifi = function () {
 };
 
 module.exports = {
-    setWifi,
+    setWifi: setWifi,
 };

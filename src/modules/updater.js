@@ -125,6 +125,8 @@ const isConfigValid = function(newConfig){
 };
 
 module.exports = {
-    getState,
-    setUpdater
+    getState:getState,
+    setUpdater:setUpdater,
+    getNewConfig: getNewConfig,
+    isConfigValid: isConfigValid,
 };
