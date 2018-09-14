@@ -1,6 +1,6 @@
 const HTTP = require('http');
 const SENSOR = require('sensor');
-const LED = require('led');
+const MYLED = require('myLed');
 const WIFI = require('myWifi');
 const UPDATER = require('updater');
 
@@ -139,10 +139,10 @@ const getPostData = function (req, res, callback) {
 
 const handleLedRoute = function (data, res) {
     if (data.status === true) {
-        LED.setLed(true);
+        MYLED.setLed(true);
         ledResponse(res);
     } else if (data.status === false) {
-        LED.setLed(false);
+        MYLED.setLed(false);
         ledResponse(res);
     } else {
         console.log('INFO: Invalid data , ' + data);
@@ -186,7 +186,7 @@ const createServer = function (port) {
 E.on('init', function () {
     START_TIME = Date.now();
     console.log('INFO: init board');
-    LED.configureLed();
+    MYLED.configureLed();
     WIFI.setWifi();
     createServer(PORT);
     SENSOR.configureIC2();
