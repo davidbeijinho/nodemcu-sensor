@@ -17,6 +17,7 @@ Swagger Ui
 - http://localhost:3000/swagger.json
 
 ## Todo
+    - Split server code to be By route and not by method
     - Be able to access to espruino over hostname
     - Fix swagger UI POST send as OPTIONS
     - Get current time from network
