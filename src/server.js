@@ -36,7 +36,7 @@ const sensorResponse = function (res) {
 
 const ledResponse = function (res) {
     sendOKResponse(res, {
-        status: LED.getStatus(),
+        status: MYLED.getStatus(),
         upTime: getUptime(),
         startTime: START_TIME,
     });
