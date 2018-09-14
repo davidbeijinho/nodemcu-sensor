@@ -20,13 +20,11 @@ const getDefaultStateCalls = function() {
 };
 
 const STATE = {
-    updater: {
         url: '',
         interval: MIN_INTERVAL,
         active: false,
         process: 0,
         calls: getDefaultStateCalls(),
-    },
 };
 
 const getState = function (){
@@ -38,27 +36,28 @@ const resetUpdaterCalls = function() {
 };
 
 const startUpdater = function(){
-    STATE.updater.process = setInterval(function () {
+    STATE.process = setInterval(function () {
         console.log('INFO: interval run');
         checkUpdater();
         updaterFunction();
-    }, STATE.updater.interval);
+    }, STATE.interval);
 };
 
 const checkUpdater= function(){
-    if (STATE.updater.calls.errorSequence >= MAX_ERRORS){
+    if (STATE.calls.errorSequence >= MAX_ERRORS){
         console.log('INFO: stop updater to many errors');
         stopUpdater();
     }
 };
 
 const stopUpdater = function() {
-    clearInterval(STATE.updater.process);
-    STATE.updater.active = false;
+    clearInterval(STATE.process);
+    STATE.active = false;
 };
 
 
 const updaterFunction = function() {
+    // TODO solve this , how to get the sensor here
     SENSOR.getSensorData(function(err, data){
         if (err) {
             console.log('INFO: Error calling update function', err);
@@ -79,13 +78,13 @@ const updaterCallback = function(data){
 };
 
 const setUpdater = function(newConfig, callback, callbackParam) {
-    if (STATE.updater.active) {
+    if (STATE.active) {
         stopUpdater();
     }
 
     setNewUpdater(newConfig);
 
-    if (STATE.updater.active) {
+    if (STATE.active) {
         resetUpdaterCalls();
         startUpdater();
     }
@@ -93,31 +92,31 @@ const setUpdater = function(newConfig, callback, callbackParam) {
 };
 
 const updaterSuccess = function() {
-    STATE.updater.calls.lastStatus = true;
-    STATE.updater.calls.totalCount++;
-    STATE.updater.calls.errorSequence = 0;
+    STATE.calls.lastStatus = true;
+    STATE.calls.totalCount++;
+    STATE.calls.errorSequence = 0;
 };
 const updaterFail = function() {
-    if (STATE.updater.calls.lastStatus === false) {
-        STATE.updater.calls.errorSequence++;
+    if (STATE.calls.lastStatus === false) {
+        STATE.calls.errorSequence++;
     }
-    STATE.updater.calls.lastStatus = false;
-    STATE.updater.calls.totalCount++;
-    STATE.updater.calls.errorCount++;
-    console.log( STATE.updater.calls);
+    STATE.calls.lastStatus = false;
+    STATE.calls.totalCount++;
+    STATE.calls.errorCount++;
+    console.log( STATE.calls);
 };
 
 const setNewUpdater = function(newConfig) {
-    STATE.updater.url = newConfig.url;
-    STATE.updater.interval = newConfig.interval;
-    STATE.updater.active = newConfig.active;
+    STATE.url = newConfig.url;
+    STATE.interval = newConfig.interval;
+    STATE.active = newConfig.active;
 };
 
 const getNewConfig = function(data){
     return {
-        url: data.hasOwnProperty('url') ? data.url :  STATE.updater.url,
-        interval: data.hasOwnProperty('interval') ? data.interval :  STATE.updater.interval,
-        active: data.hasOwnProperty('active') ? data.active :  STATE.updater.active,
+        url: data.hasOwnProperty('url') ? data.url :  STATE.url,
+        interval: data.hasOwnProperty('interval') ? data.interval :  STATE.interval,
+        active: data.hasOwnProperty('active') ? data.active :  STATE.active,
     };
 };
 
