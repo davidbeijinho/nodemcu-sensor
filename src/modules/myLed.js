@@ -1,7 +1,7 @@
 const LEDPIN = NodeMCU.D4;
 
 const STATE = {
-    status: false,
+    status: true,
 }
 
 const setStatus= function (status) {

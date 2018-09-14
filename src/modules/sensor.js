@@ -6,7 +6,7 @@ const BMP085 = require('BMP085');
 var BMP = null;
 
 const getSensorData = function(callback){
-    if (BMP !== null) {
+    if (isConected()) {
         BMP.getPressure(function (d) {
             let altitude = BMP.getAltitude(d.pressure, SEALEVEL);
             console.log('INFO: Pressure: ' + d.pressure + ' Pa');
@@ -26,18 +26,16 @@ const getSensorData = function(callback){
 };
 
 const isConected = function () {
-    return BMP !== null;
+    return (BMP !== null);
 }
 
 const connectToSensor = function () {
     BMP = BMP085.connect(I2CBUS, BMP_MODE);
-    var isConected = isConected();
-    if (isConected) {
+    if (isConected()) {
         console.log('INFO: Sucessfuly connected to sensor');
     } else {
         console.log('INFO: Error connecting to sensor');
     }
-    return isConected;
 };
 
 const configureIC2 = function () {
