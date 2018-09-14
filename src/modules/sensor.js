@@ -31,16 +31,21 @@ const isConected = function () {
 
 const connectToSensor = function () {
     BMP = BMP085.connect(I2CBUS, BMP_MODE);
-    if (BMP !== null) {
+    var isConected = isConected();
+    if (isConected) {
         console.log('INFO: Sucessfuly connected to sensor');
     } else {
         console.log('INFO: Error connecting to sensor');
     }
+    return isConected;
 };
 
 const configureIC2 = function () {
     console.log('INFO: configure IC2');
-    I2CBUS.setup({ scl: NodeMCU.D1, sda: NodeMCU.D2 });
+    I2CBUS.setup({ 
+        scl: NodeMCU.D1,
+        sda: NodeMCU.D2,
+    });
 };
 
 module.exports = {

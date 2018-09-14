@@ -2,56 +2,24 @@ const HTTP = require('http');
 const SENSOR = require('sensor');
 const LED = require('led');
 const WIFI = require('myWifi');
+const UPDATER = require('updater');
 
 const PORT = 80;
-const MIN_INTERVAL = 10;
-const MAX_ERRORS = 10;
-
-const defaultCalls = {
-    time: 0,
-    lastStatus: null,
-    totalCount: 0,
-    errorCount: 0,
-    errorSequence: 0,
-};
-
-const getDefaultStateCalls = function() {
-    return {
-        time: defaultCalls.time,
-        lastStatus: defaultCalls.lastStatus,
-        totalCount: defaultCalls.totalCount,
-        errorCount: defaultCalls.errorCount,
-        errorSequence: defaultCalls.errorSequence,
-    };
-};
-
-const STATE = {
-    updater: {
-        url: '',
-        interval: MIN_INTERVAL,
-        active: false,
-        process: 0,
-        calls: getDefaultStateCalls(),
-    },
-};
-
-const resetUpdaterCalls = function() {
-    STATE.updater.calls = getDefaultStateCalls();
-};
+var  START_TIME;
 
 const getUptime = function () {
-    return Date.now() - STATE.startTime;
+    return Date.now() - START_TIME;
 };
 
 const infoResponse = function (res) {
     doResponse(res, 200, {
         upTime: getUptime(),
-        startTime: STATE.startTime,
+        startTime: START_TIME,
     });
 };
 
 const sensorResponse = function (res) {
-    getSensorData(function(err, data){
+    SENSOR.getSensorData(function(err, data){
     if (err) {
         errorResponse(res, 500, err);
     } else {
@@ -60,7 +28,7 @@ const sensorResponse = function (res) {
             temperature: data.temperature,
             altitude: data.altitude,
             upTime: getUptime(),
-            startTime: STATE.startTime,
+            startTime: START_TIME,
         });
     }
     });
@@ -68,17 +36,17 @@ const sensorResponse = function (res) {
 
 const ledResponse = function (res) {
     sendOKResponse(res, {
-        status: STATE.ledStatus,
+        status: LED.getStatus(),
         upTime: getUptime(),
-        startTime: STATE.startTime,
+        startTime: START_TIME,
     });
 };
 
 const updaterResponse = function (res) {
     sendOKResponse(res, {
-        updater: STATE.updater,
+        updater: UPDATER.getState(),
         upTime: getUptime(),
-        startTime: STATE.startTime,
+        startTime: START_TIME,
     });
 };
 
@@ -90,7 +58,7 @@ const errorResponse = function (res, code, message) {
     doResponse(res, code, {
         error: message,
         upTime: getUptime(),
-        startTime: STATE.startTime,
+        startTime: START_TIME,
     });
 };
 
@@ -109,7 +77,7 @@ const connectResponse = function (res) {
     sendOKResponse(res, {
         bmp: SENSOR.isConected(),
         upTime: getUptime(),
-        startTime: STATE.startTime,
+        startTime: START_TIME,
     });
 };
 
@@ -138,81 +106,6 @@ const getRoutes = function (req, res) {
     }
 };
 
-const startUpdater = function(){
-    STATE.updater.process = setInterval(function () {
-        console.log('INFO: interval run');
-        checkUpdater();
-        updaterFunction();
-    }, STATE.updater.interval);
-};
-
-const checkUpdater= function(){
-    if (STATE.updater.calls.errorSequence >= MAX_ERRORS){
-        console.log('INFO: stop updater to many errors');
-        stopUpdater();
-    }
-};
-
-const stopUpdater = function() {
-    clearInterval(STATE.updater.process);
-    STATE.updater.active = false;
-};
-
-const updaterFunction = function() {
-    getSensorData(function(err, data){
-        if (err) {
-            console.log('INFO: Error calling update function', err);
-            updaterFail();
-        } else {
-            updaterCallback(data);
-        }
-    });
-};
-
-const updaterCallback = function(data){
-    var success = false;
-    if (success){
-        updaterSuccess();
-    } else {
-        updaterFail();
-    }
-};
-
-const setUpdater = function(newConfig, callback, callbackParam) {
-    if (STATE.updater.active) {
-        stopUpdater();
-    }
-
-    setNewUpdater(newConfig);
-
-    if (STATE.updater.active) {
-        resetUpdaterCalls();
-        startUpdater();
-    }
-    callback(callbackParam);
-};
-
-const updaterSuccess = function() {
-    STATE.updater.calls.lastStatus = true;
-    STATE.updater.calls.totalCount++;
-    STATE.updater.calls.errorSequence = 0;
-};
-const updaterFail = function() {
-    if (STATE.updater.calls.lastStatus === false) {
-        STATE.updater.calls.errorSequence++;
-    }
-    STATE.updater.calls.lastStatus = false;
-    STATE.updater.calls.totalCount++;
-    STATE.updater.calls.errorCount++;
-    console.log( STATE.updater.calls);
-};
-
-const setNewUpdater = function(newConfig) {
-    STATE.updater.url = newConfig.url;
-    STATE.updater.interval = newConfig.interval;
-    STATE.updater.active = newConfig.active;
-};
-
 const postRoutes = function (req, res) {
     switch (req.url) {
         case '/led':
@@ -225,7 +118,7 @@ const postRoutes = function (req, res) {
             break;
         case '/connect':
             console.log('INFO: Try to reconect to the sensor');
-            connectToSensor();
+            SENSOR.connectToSensor();
             connectResponse(res);
             break;
         default:
@@ -246,10 +139,10 @@ const getPostData = function (req, res, callback) {
 
 const handleLedRoute = function (data, res) {
     if (data.status === true) {
-        setLed(true);
+        LED.setLed(true);
         ledResponse(res);
     } else if (data.status === false) {
-        setLed(false);
+        LED.setLed(false);
         ledResponse(res);
     } else {
         console.log('INFO: Invalid data , ' + data);
@@ -258,14 +151,10 @@ const handleLedRoute = function (data, res) {
 };
 
 const handleUpdaterRoute = function (data, res) {
-    var newConfig = {
-        url: data.hasOwnProperty('url') ? data.url :  STATE.updater.url,
-        interval: data.hasOwnProperty('interval') ? data.interval :  STATE.updater.interval,
-        active: data.hasOwnProperty('active') ? data.active :  STATE.updater.active,
-    };
+    var newConfig = UPDATER.getNewConfig(data);
     console.log('INFO: new config', newConfig);
-    if (typeof newConfig.url == 'string' && typeof newConfig.interval == 'number' && newConfig.interval >= MIN_INTERVAL && typeof newConfig.active == 'boolean') {
-        setUpdater(newConfig, updaterResponse, res);
+    if (UPDATER.isConfigValid(newConfig)) {
+        UPDATER.setUpdater(newConfig, updaterResponse, res);
     } else {
         console.log('INFO: Invalid updater config , ' + data);
         errorResponse(res, 403, 'Invalid updater config');
@@ -273,7 +162,7 @@ const handleUpdaterRoute = function (data, res) {
 };
 
 const createServer = function (port) {
-    console.log('INFO: Start Time ' + STATE.startTime);
+    console.log('INFO: Start Time ' + START_TIME);
     HTTP.createServer(function (req, res) {
         console.log('INFO: Starting server at port ' + port);
         switch (req.method) {
@@ -295,7 +184,7 @@ const createServer = function (port) {
 };
 
 E.on('init', function () {
-    STATE.startTime = Date.now();
+    START_TIME = Date.now();
     console.log('INFO: init board');
     LED.configureLed();
     WIFI.setWifi();
