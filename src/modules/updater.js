@@ -32,7 +32,7 @@ const getState = function () {
 };
 
 const resetUpdaterCalls = function () {
-    STATE.updater.calls = getDefaultStateCalls();
+    STATE.calls = getDefaultStateCalls();
 };
 
 const startUpdater = function () {
@@ -68,7 +68,31 @@ const updaterFunction = function () {
     });
 };
 
+const postData = function (sensorData) {
+    var options = {
+        // host: 'example.com', // host name
+        host: STATE.url,
+        // port: 80,            // (optional) port, defaults to 80
+        // path: '/',           // path sent to server
+        method: 'POST',       // HTTP command sent to server (must be uppercase 'GET', 'POST', etc)
+        // protocol: 'http:',   // optional protocol - https: or http:
+        // headers: { key : value, key : value } // (optional) HTTP headers
+    };
+    HTTP.request(options, function (res) {
+        var requestData = '';
+        res.on('data', function (d) {
+            requestData += d;
+        });
+
+        res.on('close', function (data) {
+            console.log("Connection closed", requestData);
+            console.log("Connection closed", data);
+        });
+    }).end(sensorData);
+};
+
 const updaterCallback = function (data) {
+    console.log('GET DATA', data);
     var success = false;
     if (success) {
         updaterSuccess();
