@@ -20,7 +20,11 @@ const getDefaultStateCalls = function () {
 };
 
 const STATE = {
-    url: '',
+    path: '',
+    host: '',
+    port: 80,
+    method: 'POST',
+    protocol: 'http:',
     interval: MIN_INTERVAL,
     active: false,
     process: 0,
@@ -70,12 +74,11 @@ const updaterFunction = function () {
 
 const postData = function (sensorData) {
     var options = {
-        // host: 'example.com', // host name
-        host: STATE.url,
-        // port: 80,            // (optional) port, defaults to 80
-        // path: '/',           // path sent to server
-        method: 'POST',       // HTTP command sent to server (must be uppercase 'GET', 'POST', etc)
-        // protocol: 'http:',   // optional protocol - https: or http:
+        path: STATE.path,           // path sent to server
+        host: STATE.host,           // host: 'example.com', // host name
+        port: STATE.port,           // (optional) port, defaults to 80
+        method: STATE.method,       // HTTP command sent to server (must be uppercase 'GET', 'POST', etc)
+        protocol: STATE.protocol,   // protocol: 'http:',   // optional protocol - https: or http:
         // headers: { key : value, key : value } // (optional) HTTP headers
     };
     HTTP.request(options, function (res) {
@@ -83,22 +86,23 @@ const postData = function (sensorData) {
         res.on('data', function (d) {
             requestData += d;
         });
-
         res.on('close', function (data) {
-            console.log("Connection closed", requestData);
-            console.log("Connection closed", data);
+            console.log("Connection closed 1", requestData);
+            console.log("Connection closed 2", data);
+            updaterFail();
         });
     }).end(sensorData);
 };
 
 const updaterCallback = function (data) {
     console.log('GET DATA', data);
-    var success = false;
-    if (success) {
-        updaterSuccess();
-    } else {
-        updaterFail();
-    }
+    postData(data);
+    // var success = false;
+    // if (success) {
+    //     updaterSuccess();
+    // } else {
+    //     updaterFail();
+    // }
 };
 
 const setUpdater = function (newConfig, callback, callbackParam) {
@@ -131,21 +135,28 @@ const updaterFail = function () {
 };
 
 const setNewUpdater = function (newConfig) {
-    STATE.url = newConfig.url;
+    STATE.path = newConfig.path;
+    STATE.port = newConfig.port;
+    STATE.host = newConfig.host;
     STATE.interval = newConfig.interval;
     STATE.active = newConfig.active;
 };
 
 const getNewConfig = function (data) {
     return {
-        url: data.hasOwnProperty('url') ? data.url : STATE.url,
+        path: data.hasOwnProperty('path') ? data.path : STATE.path,
+        host: data.hasOwnProperty('host') ? data.host : STATE.host,
+        port: data.hasOwnProperty('port') ? data.port : STATE.port,
         interval: data.hasOwnProperty('interval') ? data.interval : STATE.interval,
         active: data.hasOwnProperty('active') ? data.active : STATE.active,
     };
 };
 
 const isConfigValid = function (newConfig) {
-    return typeof newConfig.url == 'string' &&
+    return typeof newConfig.path == 'string' &&
+        typeof newConfig.host == 'string' &&
+        typeof newConfig.port == 'number' &&
+        newConfig.port >= 0 &&
         typeof newConfig.interval == 'number' &&
         newConfig.interval >= MIN_INTERVAL &&
         typeof newConfig.active == 'boolean';
