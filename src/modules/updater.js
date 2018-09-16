@@ -16,6 +16,11 @@ const getDefaultStateCalls = function () {
         totalCount: defaultCalls.totalCount,
         errorCount: defaultCalls.errorCount,
         errorSequence: defaultCalls.errorSequence,
+        errors: {
+            sensor: 0,
+            request: 0,
+            response: 0,
+        }
     };
 };
 
