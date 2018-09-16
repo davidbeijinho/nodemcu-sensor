@@ -59,9 +59,8 @@ const stopUpdater = function () {
     STATE.active = false;
 };
 
-
 const updaterFunction = function () {
-    // TODO solve this , how to get the sensor here
+    // is this variable global ?
     SENSOR.getSensorData(function (err, data) {
         if (err) {
             console.log('INFO: Error calling update function', err);
@@ -73,6 +72,7 @@ const updaterFunction = function () {
 };
 
 const postData = function (sensorData) {
+    var parsedData = JSON.stringify(sensorData);
     var options = {
         path: STATE.path,           // path sent to server
         host: STATE.host,           // host: 'example.com', // host name
@@ -80,29 +80,38 @@ const postData = function (sensorData) {
         method: STATE.method,       // HTTP command sent to server (must be uppercase 'GET', 'POST', etc)
         protocol: STATE.protocol,   // protocol: 'http:',   // optional protocol - https: or http:
         // headers: { key : value, key : value } // (optional) HTTP headers
+        headers: {
+            "content-type": "application/json",
+            "content-length": parsedData.length,
+            "connection": "close"
+        }
     };
-    HTTP.request(options, function (res) {
+    var request = HTTP.request(options, function (res) {
         var requestData = '';
         res.on('data', function (d) {
             requestData += d;
         });
         res.on('close', function (data) {
-            console.log("Connection closed 1", requestData);
-            console.log("Connection closed 2", data);
-            updaterFail();
+            console.log("INFO: post response 1", requestData);
+            console.log("INFO: post response 2", data);
+            updaterSuccess();
         });
-    }).end(sensorData);
+        if (res.statusCode == 200) {
+            updaterSuccess();
+        } else {
+            updaterFail();
+        }
+    });
+    request.on('error', function (e) {
+        console.log('INFO : error posting data',  e);
+        updaterFail();
+    });
+    request.write(parsedData);
+    request.end();
 };
 
 const updaterCallback = function (data) {
-    console.log('GET DATA', data);
     postData(data);
-    // var success = false;
-    // if (success) {
-    //     updaterSuccess();
-    // } else {
-    //     updaterFail();
-    // }
 };
 
 const setUpdater = function (newConfig, callback, callbackParam) {
@@ -131,7 +140,7 @@ const updaterFail = function () {
     STATE.calls.lastStatus = false;
     STATE.calls.totalCount++;
     STATE.calls.errorCount++;
-    console.log(STATE.calls);
+    console.log('INFO: Updater calls:', STATE.calls);
 };
 
 const setNewUpdater = function (newConfig) {
