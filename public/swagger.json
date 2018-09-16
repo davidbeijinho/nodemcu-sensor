@@ -19,16 +19,16 @@
             "description": "The main route"
         },
         {
-            "name": "Sensor",
-            "description": "Sensor related routes"
-        },
-        {
             "name": "Led",
             "description": "Led related routes"
         },
         {
             "name": "Updater",
             "description": "Updater related routes"
+        },
+        {
+            "name": "Sensor",
+            "description": "Sensor related routes"
         }
     ],
     "paths": {
@@ -51,25 +51,44 @@
                 }
             }
         },
-        "/connect": {
-            "post": {
+        "/led": {
+            "get": {
                 "tags": [
-                    "Sensor"
+                    "Led"
                 ],
-                "summary": "Connect to the sensor",
+                "summary": "Get the led information",
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/boardInformation"
+                                    "$ref": "#/components/schemas/ledApiResponse"
                                 }
                             }
                         }
-                    },
-                    "400": {
-                        "description": "Invalid Order",
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Led"
+                ],
+                "summary": "Set the status of the led",
+                "requestBody": {
+                    "description": "Optional description in *Markdown*",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ledInformation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Invalid ID supplied",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -130,55 +149,6 @@
                 }
             }
         },
-        "/led": {
-            "get": {
-                "tags": [
-                    "Led"
-                ],
-                "summary": "Get the led information",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ledApiResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Led"
-                ],
-                "summary": "Set the status of the led",
-                "requestBody": {
-                    "description": "Optional description in *Markdown*",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/ledInformation"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Invalid ID supplied",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/boardInformation"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/sensor": {
             "get": {
                 "tags": [
@@ -202,6 +172,36 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/errorSensorApiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sensor/connect": {
+            "post": {
+                "tags": [
+                    "Sensor"
+                ],
+                "summary": "Connect to the sensor",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/boardInformation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/boardInformation"
                                 }
                             }
                         }

@@ -11,17 +11,54 @@ const getUptime = function () {
     return Date.now() - START_TIME;
 };
 
-const infoResponse = function (res) {
-    doResponse(res, 200, {
+const mainRouteResponse = function (res) {
+    sendOKResponse(res, {
         upTime: getUptime(),
         startTime: START_TIME,
     });
 };
 
+const ledResponse = function (res) {
+    sendOKResponse(res, {
+        status: MYLED.getStatus(),
+        upTime: getUptime(),
+        startTime: START_TIME,
+    });
+};
+
+const ledPostRoute = function (data, res) {
+    if (typeof data.status == 'boolean') {
+        MYLED.setStatus(data.status);
+        ledResponse(res);
+    } else {
+        console.log('INFO: Invalid data , ' + JSON.stringify(data));
+        sendErrorResponse(res, 400, 'Invalid Data');
+    }
+};
+
+const updaterResponse = function (res) {
+    sendOKResponse(res, {
+        updater: UPDATER.getState(),
+        upTime: getUptime(),
+        startTime: START_TIME,
+    });
+};
+
+const updaterPostRoute = function (data, res) {
+    var newConfig = UPDATER.getNewConfig(data);
+    console.log('INFO: new config', newConfig);
+    if (UPDATER.isConfigValid(newConfig)) {
+        UPDATER.setUpdater(newConfig, updaterResponse, res);
+    } else {
+        console.log('INFO: Invalid updater config , ' + data);
+        sendErrorResponse(res, 400, 'Invalid updater config');
+    }
+};
+
 const sensorResponse = function (res) {
     SENSOR.getSensorData(function(err, data){
     if (err) {
-        errorResponse(res, 500, err);
+        sendErrorResponse(res, 400, err);
     } else {
         sendOKResponse(res, {
             pressure: data.pressure,
@@ -34,17 +71,9 @@ const sensorResponse = function (res) {
     });
 };
 
-const ledResponse = function (res) {
+const sensorPostRoute = function (res) {
     sendOKResponse(res, {
-        status: MYLED.getStatus(),
-        upTime: getUptime(),
-        startTime: START_TIME,
-    });
-};
-
-const updaterResponse = function (res) {
-    sendOKResponse(res, {
-        updater: UPDATER.getState(),
+        bmp: SENSOR.isConected(),
         upTime: getUptime(),
         startTime: START_TIME,
     });
@@ -54,7 +83,7 @@ const sendOKResponse = function (res, data) {
     doResponse(res, 200, data);
 };
 
-const errorResponse = function (res, code, message) {
+const sendErrorResponse = function (res, code, message) {
     doResponse(res, code, {
         error: message,
         upTime: getUptime(),
@@ -73,61 +102,6 @@ const doResponse = function (res, code, data) {
     res.end();
 };
 
-const connectResponse = function (res) {
-    sendOKResponse(res, {
-        bmp: SENSOR.isConected(),
-        upTime: getUptime(),
-        startTime: START_TIME,
-    });
-};
-
-const getRoutes = function (req, res) {
-    switch (req.url) {
-        case '/':
-            console.log('INFO: Main page');
-            infoResponse(res);
-            break;
-        case '/sensor':
-            console.log('INFO: Sensor response');
-            sensorResponse(res);
-            break;
-        case '/led':
-            console.log('INFO: Get status of the LED');
-            ledResponse(res);
-            break;
-        case '/updater':
-            console.log('INFO: Get updater information');
-            updaterResponse(res);
-            break;
-        default:
-            console.log('INFO: GET URL not handled, ' + req.url);
-            errorResponse(res, 404, 'GET Url not handled');
-            break;
-    }
-};
-
-const postRoutes = function (req, res) {
-    switch (req.url) {
-        case '/led':
-            console.log('INFO: LED Post route');
-            getPostData(req, res, handleLedRoute);
-            break;
-        case '/updater':
-            console.log('INFO: Updater config route');
-            getPostData(req, res, handleUpdaterRoute);
-            break;
-        case '/connect':
-            console.log('INFO: Try to reconect to the sensor');
-            SENSOR.connectToSensor();
-            connectResponse(res);
-            break;
-        default:
-            console.log('INFO: POST URL not handled, ' + req.url);
-            errorResponse(res, 404, 'POST Url not handled');
-            break;
-    }
-};
-
 const getPostData = function (req, res, callback) {
     var data = '';
     req.on('data', function (d) { data += d; });
@@ -137,50 +111,83 @@ const getPostData = function (req, res, callback) {
     });
 };
 
-const handleLedRoute = function (data, res) {
-    if (data.status === true) {
-        MYLED.setStatus(true);
-        ledResponse(res);
-    } else if (data.status === false) {
-        MYLED.setStatus(false);
-        ledResponse(res);
+const mainRoutesHandler = function(req, res) {
+    if (req.method === 'GET') {
+        console.log('INFO: Main page');
+        mainRouteResponse(res);
     } else {
-        console.log('INFO: Invalid data , ' + data);
-        errorResponse(res, 403, 'Invalid Data');
+        notHandled(req, res);
     }
 };
 
-const handleUpdaterRoute = function (data, res) {
-    var newConfig = UPDATER.getNewConfig(data);
-    console.log('INFO: new config', newConfig);
-    if (UPDATER.isConfigValid(newConfig)) {
-        UPDATER.setUpdater(newConfig, updaterResponse, res);
+const ledRoutesHandler = function(req, res) {
+    if (req.method === 'GET') {
+        console.log('INFO: Get status of the LED');
+        ledResponse(res);
+    } else if (req.method === 'POST') {
+        console.log('INFO: LED Post route');
+        getPostData(req, res, ledPostRoute);
     } else {
-        console.log('INFO: Invalid updater config , ' + data);
-        errorResponse(res, 403, 'Invalid updater config');
+        notHandled(req, res);
     }
+};
+
+const updaterRoutesHandler = function(req, res) {
+    if (req.method === 'GET') {
+        console.log('INFO: Get updater information');
+        updaterResponse(res);
+    } else if (req.method === 'POST') {
+        console.log('INFO: Updater config route');
+        getPostData(req, res, updaterPostRoute);
+    } else {
+        notHandled(req, res);
+    }
+};
+
+const sensorRoutesHandler = function(req, res) {
+    if (req.method === 'GET' && req.url === '/sensor') {
+        console.log('INFO: Sensor response');
+        sensorResponse(res);
+    } else if (req.method === 'POST' && req.url === '/sensor/connect') {
+        console.log('INFO: Try to reconect to the sensor');
+        SENSOR.connectToSensor();
+        sensorPostRoute(res);
+    } else {
+        notHandled(req, res);
+    }
+};
+
+const router = function(req, res){
+    switch (req.url) {
+        case '/':
+            mainRoutesHandler(req, res);
+            break;
+        case '/led':
+            ledRoutesHandler(req, res);
+            break;
+        case '/updater':
+            updaterRoutesHandler(req, res);
+            break;
+        case '/sensor':
+        case '/sensor/connect':
+            sensorRoutesHandler(req, res);
+            break;
+        default:
+            notHandled(req, res);
+            break;
+    }
+};
+
+const notHandled = function(req, res){
+    console.log('INFO: URL not handled, ');
+    console.log('INFO: URL, ' + req.url);
+    console.log('INFO: Method, ' + req.method);
+    sendErrorResponse(res, 400, 'Url not handled');
 };
 
 const createServer = function (port) {
     console.log('INFO: Start Time ' + START_TIME);
-    HTTP.createServer(function (req, res) {
-        console.log('INFO: Starting server at port ' + port);
-        switch (req.method) {
-            case 'GET':
-                getRoutes(req, res);
-                break;
-            case 'POST':
-                postRoutes(req, res);
-                break;
-            // case 'OPTIONS': // HACK for swagger ui
-            //     postRoutes(req, res);
-            //     break;
-            default:
-                console.log('INFO: Method not handled, ' + req.method);
-                errorResponse(res, 405, 'Method not handled');
-                break;
-        }
-    }).listen(port);
+    HTTP.createServer(router).listen(port);
 };
 
 E.on('init', function () {
