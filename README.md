@@ -13,16 +13,16 @@ Board Json
 
 Swagger Ui
 
-- http://localhost:3000
-- http://localhost:3000/swagger.json
+- http://localhost:9000
+- http://localhost:9000/swagger.json
 
 ## Todo
-    - Split server code to be By route and not by method
     - Be able to access to espruino over hostname
     - Fix swagger UI POST send as OPTIONS
     - Get current time from network
     - Method to update sea level presure
     - Method to call api in intervals
-        - Update interval
-        - Stop/Start interval
         - Pressist interval config after restart
+        - listen to board events low memory to stop updater
+        - Save reason for stop ( fails get data, fails response, board events)
+    - update swagger documentation
