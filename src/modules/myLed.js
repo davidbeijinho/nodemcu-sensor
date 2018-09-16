@@ -4,7 +4,7 @@ const STATE = {
     status: true,
 }
 
-const setStatus= function (status) {
+const setStatus = function (status) {
     STATE.status = status;
     digitalWrite(LEDPIN, STATE.status);
 };

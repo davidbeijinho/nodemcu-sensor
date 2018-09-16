@@ -9,7 +9,7 @@ const defaultCalls = {
     errorSequence: 0,
 };
 
-const getDefaultStateCalls = function() {
+const getDefaultStateCalls = function () {
     return {
         time: defaultCalls.time,
         lastStatus: defaultCalls.lastStatus,
@@ -20,22 +20,22 @@ const getDefaultStateCalls = function() {
 };
 
 const STATE = {
-        url: '',
-        interval: MIN_INTERVAL,
-        active: false,
-        process: 0,
-        calls: getDefaultStateCalls(),
+    url: '',
+    interval: MIN_INTERVAL,
+    active: false,
+    process: 0,
+    calls: getDefaultStateCalls(),
 };
 
-const getState = function (){
+const getState = function () {
     return STATE;
 };
 
-const resetUpdaterCalls = function() {
+const resetUpdaterCalls = function () {
     STATE.updater.calls = getDefaultStateCalls();
 };
 
-const startUpdater = function(){
+const startUpdater = function () {
     STATE.process = setInterval(function () {
         console.log('INFO: interval run');
         checkUpdater();
@@ -43,22 +43,22 @@ const startUpdater = function(){
     }, STATE.interval);
 };
 
-const checkUpdater= function(){
-    if (STATE.calls.errorSequence >= MAX_ERRORS){
+const checkUpdater = function () {
+    if (STATE.calls.errorSequence >= MAX_ERRORS) {
         console.log('INFO: stop updater to many errors');
         stopUpdater();
     }
 };
 
-const stopUpdater = function() {
+const stopUpdater = function () {
     clearInterval(STATE.process);
     STATE.active = false;
 };
 
 
-const updaterFunction = function() {
+const updaterFunction = function () {
     // TODO solve this , how to get the sensor here
-    SENSOR.getSensorData(function(err, data){
+    SENSOR.getSensorData(function (err, data) {
         if (err) {
             console.log('INFO: Error calling update function', err);
             updaterFail();
@@ -68,16 +68,16 @@ const updaterFunction = function() {
     });
 };
 
-const updaterCallback = function(data){
+const updaterCallback = function (data) {
     var success = false;
-    if (success){
+    if (success) {
         updaterSuccess();
     } else {
         updaterFail();
     }
 };
 
-const setUpdater = function(newConfig, callback, callbackParam) {
+const setUpdater = function (newConfig, callback, callbackParam) {
     if (STATE.active) {
         stopUpdater();
     }
@@ -91,42 +91,45 @@ const setUpdater = function(newConfig, callback, callbackParam) {
     callback(callbackParam);
 };
 
-const updaterSuccess = function() {
+const updaterSuccess = function () {
     STATE.calls.lastStatus = true;
     STATE.calls.totalCount++;
     STATE.calls.errorSequence = 0;
 };
-const updaterFail = function() {
+const updaterFail = function () {
     if (STATE.calls.lastStatus === false) {
         STATE.calls.errorSequence++;
     }
     STATE.calls.lastStatus = false;
     STATE.calls.totalCount++;
     STATE.calls.errorCount++;
-    console.log( STATE.calls);
+    console.log(STATE.calls);
 };
 
-const setNewUpdater = function(newConfig) {
+const setNewUpdater = function (newConfig) {
     STATE.url = newConfig.url;
     STATE.interval = newConfig.interval;
     STATE.active = newConfig.active;
 };
 
-const getNewConfig = function(data){
+const getNewConfig = function (data) {
     return {
-        url: data.hasOwnProperty('url') ? data.url :  STATE.url,
-        interval: data.hasOwnProperty('interval') ? data.interval :  STATE.interval,
-        active: data.hasOwnProperty('active') ? data.active :  STATE.active,
+        url: data.hasOwnProperty('url') ? data.url : STATE.url,
+        interval: data.hasOwnProperty('interval') ? data.interval : STATE.interval,
+        active: data.hasOwnProperty('active') ? data.active : STATE.active,
     };
 };
 
-const isConfigValid = function(newConfig){
-    return typeof newConfig.url == 'string' && typeof newConfig.interval == 'number' && newConfig.interval >= MIN_INTERVAL && typeof newConfig.active == 'boolean';
+const isConfigValid = function (newConfig) {
+    return typeof newConfig.url == 'string' &&
+        typeof newConfig.interval == 'number' &&
+        newConfig.interval >= MIN_INTERVAL &&
+        typeof newConfig.active == 'boolean';
 };
 
 module.exports = {
-    getState:getState,
-    setUpdater:setUpdater,
+    getState: getState,
+    setUpdater: setUpdater,
     getNewConfig: getNewConfig,
     isConfigValid: isConfigValid,
 };

@@ -5,7 +5,7 @@ const BMP085 = require('BMP085');
 
 var BMP = null;
 
-const getSensorData = function(callback){
+const getSensorData = function (callback) {
     if (isConected()) {
         BMP.getPressure(function (d) {
             let altitude = BMP.getAltitude(d.pressure, SEALEVEL);
@@ -40,7 +40,7 @@ const connectToSensor = function () {
 
 const configureIC2 = function () {
     console.log('INFO: configure IC2');
-    I2CBUS.setup({ 
+    I2CBUS.setup({
         scl: NodeMCU.D1,
         sda: NodeMCU.D2,
     });

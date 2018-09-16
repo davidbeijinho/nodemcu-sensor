@@ -5,7 +5,7 @@ const WIFI = require('myWifi');
 const UPDATER = require('updater');
 
 const PORT = 80;
-var  START_TIME;
+var START_TIME;
 
 const getUptime = function () {
     return Date.now() - START_TIME;
@@ -56,18 +56,18 @@ const updaterPostRoute = function (data, res) {
 };
 
 const sensorResponse = function (res) {
-    SENSOR.getSensorData(function(err, data){
-    if (err) {
-        sendErrorResponse(res, 400, err);
-    } else {
-        sendOKResponse(res, {
-            pressure: data.pressure,
-            temperature: data.temperature,
-            altitude: data.altitude,
-            upTime: getUptime(),
-            startTime: START_TIME,
-        });
-    }
+    SENSOR.getSensorData(function (err, data) {
+        if (err) {
+            sendErrorResponse(res, 400, err);
+        } else {
+            sendOKResponse(res, {
+                pressure: data.pressure,
+                temperature: data.temperature,
+                altitude: data.altitude,
+                upTime: getUptime(),
+                startTime: START_TIME,
+            });
+        }
     });
 };
 
@@ -97,7 +97,7 @@ const doResponse = function (res, code, data) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
-     });
+    });
     res.write(JSON.stringify(data));
     res.end();
 };
@@ -111,7 +111,7 @@ const getPostData = function (req, res, callback) {
     });
 };
 
-const mainRoutesHandler = function(req, res) {
+const mainRoutesHandler = function (req, res) {
     if (req.method === 'GET') {
         console.log('INFO: Main page');
         mainRouteResponse(res);
@@ -120,7 +120,7 @@ const mainRoutesHandler = function(req, res) {
     }
 };
 
-const ledRoutesHandler = function(req, res) {
+const ledRoutesHandler = function (req, res) {
     if (req.method === 'GET') {
         console.log('INFO: Get status of the LED');
         ledResponse(res);
@@ -132,7 +132,7 @@ const ledRoutesHandler = function(req, res) {
     }
 };
 
-const updaterRoutesHandler = function(req, res) {
+const updaterRoutesHandler = function (req, res) {
     if (req.method === 'GET') {
         console.log('INFO: Get updater information');
         updaterResponse(res);
@@ -144,7 +144,7 @@ const updaterRoutesHandler = function(req, res) {
     }
 };
 
-const sensorRoutesHandler = function(req, res) {
+const sensorRoutesHandler = function (req, res) {
     if (req.method === 'GET' && req.url === '/sensor') {
         console.log('INFO: Sensor response');
         sensorResponse(res);
@@ -157,7 +157,7 @@ const sensorRoutesHandler = function(req, res) {
     }
 };
 
-const router = function(req, res){
+const router = function (req, res) {
     switch (req.url) {
         case '/':
             mainRoutesHandler(req, res);
@@ -178,7 +178,7 @@ const router = function(req, res){
     }
 };
 
-const notHandled = function(req, res){
+const notHandled = function (req, res) {
     console.log('INFO: URL not handled, ');
     console.log('INFO: URL, ' + req.url);
     console.log('INFO: Method, ' + req.method);
