@@ -166,7 +166,7 @@
                             }
                         }
                     },
-                    "500": {
+                    "400": {
                         "description": "Sensor not connected",
                         "content": {
                             "application/json": {
