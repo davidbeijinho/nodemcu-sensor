@@ -20,4 +20,15 @@ app.post('*', function (req, res) {
     console.log('---------.');
     res.send("test");
   });
+  app.get('*', function (req, res) {
+    // res.send('POST request to homepage');
+    console.log('---------');
+    console.log('recieve request');
+    console.log('---------');
+    console.log(req.headers);
+    console.log('---------');
+    console.log(req.body);
+    console.log('---------.');
+    res.send("test");
+  });
 app.listen(3000);
