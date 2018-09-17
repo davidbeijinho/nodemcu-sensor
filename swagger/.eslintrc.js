@@ -1,11 +1,10 @@
 module.exports = {
     "env": {
-        "browser": true,
         "node": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 5
+        "ecmaVersion": 6
     },
     "rules": {
         "indent": [
@@ -23,13 +22,7 @@ module.exports = {
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "no-console": 0,
     },
-    "globals": {
-        "NodeMCU": true,
-        "I2C": true,
-        "digitalWrite": true,
-        "pinMode": true,
-        "E": true,
-    }
 };

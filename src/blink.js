@@ -1,6 +1,6 @@
-let status = false;
+var status = false;
 
-setInterval(() => {
-  status = !status;
-  digitalWrite(NodeMCU.D4, status);
+setInterval(function interval() {
+	status = !status;
+	digitalWrite(NodeMCU.D4, status);
 }, 1000);
