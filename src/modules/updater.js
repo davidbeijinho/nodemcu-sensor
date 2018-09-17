@@ -171,14 +171,14 @@ const isConfigValid = function (newConfig) {
         typeof newConfig.host == 'string' &&
         typeof newConfig.port == 'number' &&
         newConfig.port >= 0 &&
-        typeof newConfig.interval == 'number' &&
+        typeof newConfig.interval === 'number' &&
         newConfig.interval >= MIN_INTERVAL &&
-        typeof newConfig.active == 'boolean';
-};
+        typeof newConfig.active === 'boolean';
+}
 
 module.exports = {
-    getState: getState,
-    setUpdater: setUpdater,
-    getNewConfig: getNewConfig,
-    isConfigValid: isConfigValid,
+	getState: getState,
+	setUpdater: setUpdater,
+	getNewConfig: getNewConfig,
+	isConfigValid: isConfigValid,
 };

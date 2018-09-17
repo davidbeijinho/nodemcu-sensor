@@ -4,7 +4,7 @@
   "description": "The code for a sensor build with nodemcu using espruino",
   "main": "./src/server.js",
   "scripts": {
-    "server": "nodemon swagger.js",
+    "start": "nodemon swagger.js",
     "list": "espruino --list",
     "help": "espruino --help",
     "configs": "espruino --listconfigs",
@@ -21,7 +21,9 @@
     "resetsave": "espruino  --board ESP8266_4MB -v -b 115200 -e \"reset();save();\"  --config RESET_BEFORE_SEND=false --config SAVE_ON_SEND=false",
     "upload:watch": "npm run uploadServer:watch",
     "upload": "npm run uploadServer",
-    "dev": "nodemon swagger.js"
+    "dev": "nodemon swagger.js",
+    "eslint": "eslint .",
+    "eslint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -46,5 +48,14 @@
     "nodemon": "^1.18.4",
     "swagger-ui": "^3.18.3",
     "swagger-ui-dist": "^3.18.3-republish2"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-config-google": "^0.10.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
   }
 }
