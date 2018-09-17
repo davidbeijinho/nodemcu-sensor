@@ -1,9 +1,9 @@
 module.exports = {
-    WIFI :{
-        SSID: 'SSID-NAME',
-        hostname: 'nomada-espruino',
-        options: {
-            password: 'PASSWORD',
-        },
-    },
+  WIFI: {
+    SSID: 'SSID-NAME',
+    hostname: 'nomada-espruino',
+    options: {
+      password: 'PASSWORD'
+    }
+  }
 };

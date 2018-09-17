@@ -1,26 +1,26 @@
 const LEDPIN = NodeMCU.D4;
 
 const STATE = {
-    status: true,
-}
-
-const setStatus = function (status) {
-    STATE.status = status;
-    digitalWrite(LEDPIN, STATE.status);
+  status: true
 };
 
-const getStatus = function () {
-    return STATE.status;
+function setStatus (status) {
+  STATE.status = status;
+  digitalWrite(LEDPIN, STATE.status);
 };
 
-const configureLed = function () {
-    console.log('INFO: Configuring LED');
-    pinMode(LEDPIN, 'output');
-    setStatus(STATE.status);
+function getStatus () {
+  return STATE.status;
+};
+
+function configureLed () {
+  console.log('INFO: Configuring LED');
+  pinMode(LEDPIN, 'output');
+  setStatus(STATE.status);
 };
 
 module.exports = {
-    setStatus: setStatus,
-    configureLed: configureLed,
-    getStatus: getStatus,
+  setStatus,
+  configureLed,
+  getStatus
 };
