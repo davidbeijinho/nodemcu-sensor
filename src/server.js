@@ -4,7 +4,7 @@ var MYLED = require('myLed');
 var WIFI = require('myWifi');
 var UPDATER = require('updater');
 
-var PORT = 80;
+var PORT = 5000;
 var START_TIME;
 
 function getUptime () {
