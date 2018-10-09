@@ -1,5 +1,7 @@
+var STORAGE = require("Storage");
 const MIN_INTERVAL = 10;
 const MAX_ERRORS = 10;
+const STORAGE_FILE_NAME = 'updaterState';
 
 const defaultCalls = {
     time: 0,
@@ -131,6 +133,7 @@ const setUpdater = function (newConfig, callback, callbackParam) {
         startUpdater();
     }
     callback(callbackParam);
+    saveToMemory();
 };
 
 const updaterSuccess = function () {
@@ -176,9 +179,46 @@ const isConfigValid = function (newConfig) {
         typeof newConfig.active === 'boolean';
 }
 
+const loadFromMemory = function() {
+    var newState = STORAGE.read(STORAGE_FILE_NAME);
+    console.log('INFO: loading from memory', newState);
+    if (newState) {
+        newState = JSON.parse(STORAGE.read(STORAGE_FILE_NAME));
+        if (newState) {
+            STATE = JSON.parse(STORAGE.read(STORAGE_FILE_NAME));
+            STATE.active = false;
+            console.log('INFO: New state from memory', newState);
+            configUpdater(newState);
+        } else {
+            console.log('Info: error parsing values from memory', newState);
+        }
+    } else {
+        console.log('Info: nothing to load from memory', newState);
+    }
+}
+
+const saveToMemory = function(){
+    STORAGE.write(STORAGE_FILE_NAME, JSON.stringify(STATE));
+    console.log('INFO: saving to memory', STORAGE.read(STORAGE_FILE_NAME));
+};
+
+const configUpdater = function (data) {
+	var newConfig = getNewConfig(data);
+	console.log('INFO: new config', newConfig);
+	if (isConfigValid(newConfig)) {
+        console.log('INFO: is valid new config');
+		setUpdater(newConfig, function(){
+            console.log('INFO: New updater configured', data);
+        });
+	} else {
+		console.log('INFO: Invalid updater config', data);
+	}
+}
+
 module.exports = {
 	getState: getState,
 	setUpdater: setUpdater,
 	getNewConfig: getNewConfig,
-	isConfigValid: isConfigValid,
+    isConfigValid: isConfigValid,
+    loadFromMemory: loadFromMemory,
 };

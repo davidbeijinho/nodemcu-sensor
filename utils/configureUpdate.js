@@ -2,7 +2,7 @@ var http = require('http')
 
 const config = {
     active: true,
-    interval: 10000,
+    interval: 300000,
     port: 3000,
     path: '/api/sensor',
     host: '192.168.0.159'

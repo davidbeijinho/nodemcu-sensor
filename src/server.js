@@ -198,6 +198,7 @@ E.on('init', function onInit() {
 	createServer(PORT);
 	SENSOR.configureIC2();
 	SENSOR.connectToSensor();
+	UPDATER.loadFromMemory();
 });
 
 console.log('INFO: End of script file');

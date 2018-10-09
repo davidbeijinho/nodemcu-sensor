@@ -22,7 +22,10 @@ Swagger Ui
     - Get current time from network
     - Method to update sea level presure
     - Method to call api in intervals
-        - Pressist interval config after restart
         - listen to board events low memory to stop updater
         - Save reason for stop ( fails get data, fails response, board events)
     - update swagger documentation
+
+## UTILS
+
+require("Storage").eraseAll();
